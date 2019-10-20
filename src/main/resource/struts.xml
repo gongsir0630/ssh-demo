@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+
+<struts>
+<!--    使用spring管理struts2 action中的实体类-->
+    <constant name="struts.objectFactory" value="spring"/>
+<!--    过滤静态资源-->
+    <constant name="struts.action.excludePattern" value="/static/.*?"/>
+    <package name="user" extends="struts-default" namespace="/user">
+        <action name="user_*" class="com.gongSir.action.CustomerAction" method="{1}">
+            <result name="success">/WEB-INF/views/user/list.jsp</result>
+            <result name="list">/WEB-INF/views/user/list.jsp</result>
+            <result name="query">/WEB-INF/views/user/query.jsp</result>
+<!--            请求重定向-->
+            <result name="reList" type="redirectAction">/user/user_list</result>
+            <result name="addPage">/WEB-INF/views/user/addPage.jsp</result>
+            <result name="editPage">/WEB-INF/views/user/editPage.jsp</result>
+<!--            struts2.5版本之后必须加这个才能覅用方法-->
+            <allowed-methods>query,list,del,add,addPage,editPage,edit,search</allowed-methods>
+        </action>
+    </package>
+    <package name="order" extends="struts-default" namespace="/order">
+        <action name="order_*" class="com.gongSir.action.OrderAction" method="{1}">
+            <result name="list">/WEB-INF/views/order/list.jsp</result>
+<!--            请求重定向-->
+            <result name="reList" type="redirectAction">/order/order_list</result>
+            <result name="clear" type="redirectAction">
+                <param name="namespace">/user</param>
+                <param name="actionName">user_query?customer.userId=${customer.userId}</param>
+            </result>
+            <result name="addPage">/WEB-INF/views/order/addPage.jsp</result>
+            <result name="editPage">/WEB-INF/views/order/editPage.jsp</result>
+            <result name="temp">/WEB-INF/views/temp.jsp</result>
+            <allowed-methods>list,addPage,add,edit,editPage,search,del,clear</allowed-methods>
+        </action>
+    </package>
+</struts>

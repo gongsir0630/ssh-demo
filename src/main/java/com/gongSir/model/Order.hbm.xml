@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.gongSir.model.Order" table="orders" schema="hibernate">
+        <id name="orderId" column="order_id"/>
+        <property name="userId" column="user_id"/>
+        <property name="orderName" column="order_name"/>
+        <property name="orderMoney" column="order_money"/>
+        <property name="orderCount" column="order_count"/>
+    </class>
+</hibernate-mapping>

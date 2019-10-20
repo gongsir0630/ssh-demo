@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+<!--    包扫描-->
+    <context:component-scan base-package="com.gongSir.action"/>
+    <context:component-scan base-package="com.gongSir.dao"/>
+    <context:component-scan base-package="com.gongSir.service"/>
+
+<!--    读取jdbc配置文件-->
+    <bean id="configurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
+     </bean>
+
+<!--    配置c3p0数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+<!--        基础连接配置-->
+        <property name="driverClass" value="${mysql.driverClassName}"/>
+        <property name="jdbcUrl" value="${mysql.url}"/>
+        <property name="user" value="${mysql.username}"/>
+        <property name="password" value="${mysql.password}"/>
+<!--        扩展配置-->
+        <property name="maxPoolSize" value="50"/>
+        <property name="minPoolSize" value="5"/>
+        <property name="initialPoolSize" value="5"/>
+        <!-- 解决8小时连接实效问题 -->
+        <property name="testConnectionOnCheckin" value="true"/>
+        <property name="testConnectionOnCheckout" value="false"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+    </bean>
+
+<!--    hibernate配置-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.transaction.auto_close_session">true</prop>
+                <prop key="hibernate.connection.autocommit">true</prop>
+<!--                <prop key="hibernate.hbm2ddl.auto">update</prop>-->
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="max_fetch_depth">3</prop>
+                <!-- 解决session关闭问题 -->
+                <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://www.gongsir.club:3306/hibernate</prop>
+                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+            </props>
+        </property>
+
+<!--        扫描实体包-->
+        <property name="packagesToScan">
+            <list>
+                <value>com.gongSir.model</value>
+            </list>
+        </property>
+
+<!--        映射文件位置-->
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:/com/gongSir/model/*.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+
+<!--    注解实现事务管理-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+</beans>
